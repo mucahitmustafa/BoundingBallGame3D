@@ -1,0 +1,72 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://assets/models/blocks.meshlib" type="MeshLibrary" id=1]
+[ext_resource path="res://player/Ball.tscn" type="PackedScene" id=2]
+[ext_resource path="res://environment/DeathZone.gd" type="Script" id=3]
+[ext_resource path="res://environment/VictoryZone.gd" type="Script" id=4]
+
+[sub_resource type="Environment" id=1]
+background_mode = 1
+background_color = Color( 0.168627, 0.47451, 0.678431, 1 )
+ambient_light_color = Color( 0.117647, 0.67451, 0.945098, 1 )
+fog_enabled = true
+fog_color = Color( 0.403922, 0.572549, 0.741176, 1 )
+fog_depth_begin = 0.0
+tonemap_mode = 3
+adjustment_enabled = true
+adjustment_brightness = 0.75
+adjustment_contrast = 1.5
+adjustment_saturation = 1.2
+
+[sub_resource type="BoxShape" id=2]
+extents = Vector3( 150, 1, 150 )
+
+[sub_resource type="BoxShape" id=3]
+
+[node name="Level01" type="Spatial"]
+transform = Transform( 2.04179, 0, 0, 0, 2.04179, 0, 0, 0, 2.04179, 0, 0, 0 )
+
+[node name="GridMap" type="GridMap" parent="."]
+mesh_library = ExtResource( 1 )
+cell_size = Vector3( 4, 4, 4 )
+cell_center_x = false
+cell_center_y = false
+cell_center_z = false
+data = {
+"cells": PoolIntArray( 0, 0, 0, 1, 0, 1, 65535, 0, 655361, 0, 1, 1441793, 1, 1, 1441794, 65535, 1, 655362, 65536, 65523, 0, 65537, 65523, 0, 131071, 65523, 0, 65536, 65524, 5, 65537, 65524, 0, 131071, 65524, 0, 65536, 65525, 0, 65537, 65525, 0, 131071, 65525, 0, 65536, 65527, 0, 65537, 65527, 0, 131071, 65527, 0, 65536, 65528, 0, 65537, 65528, 0, 131071, 65528, 0, 65536, 65529, 0, 65537, 65529, 0, 131071, 65529, 0, 65536, 65530, 0, 65536, 65531, 0, 0, 65532, 4, 0, 65533, 1441792, 0, 65534, 1441792, 0, 65535, 0, 1, 65535, 2, 65535, 65535, 1048578 )
+}
+__meta__ = {
+"_editor_clip_": 0,
+"_editor_floor_": Vector3( 0, 1, 0 )
+}
+
+[node name="Ball" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 0.5, -0.75, 0.433013, 0, 0.5, 0.866025, -0.866025, -0.433013, 0.25, 0, 5, 0 )
+light_color = Color( 0.972549, 0.901961, 0.803922, 1 )
+light_energy = 2.0
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 1 )
+
+[node name="DeathZone" type="Area" parent="."]
+script = ExtResource( 3 )
+
+[node name="CollisionShape" type="CollisionShape" parent="DeathZone"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0 )
+shape = SubResource( 2 )
+
+[node name="VictoryZone" type="Area" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.91824, 10, -45.9795 )
+script = ExtResource( 4 )
+NEXT_LEVEL = "res://environment/Level02.tscn"
+
+[node name="CollisionShape" type="CollisionShape" parent="VictoryZone"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3.87718, -8.32601, -2.40789 )
+shape = SubResource( 3 )
+
+[connection signal="body_entered" from="DeathZone" to="DeathZone" method="_on_DeathZone_body_entered"]
+[connection signal="body_entered" from="VictoryZone" to="VictoryZone" method="_on_VictoryZone_body_entered"]
